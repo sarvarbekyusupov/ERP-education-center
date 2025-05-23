@@ -1,26 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { CreateGroupDto } from './dto/create-group.dto';
-import { UpdateGroupDto } from './dto/update-group.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Group } from "./entities/group.entity";
+import { CreateGroupDto } from "./dto/create-group.dto";
+import { UpdateGroupDto } from "./dto/update-group.dto";
 
 @Injectable()
 export class GroupsService {
-  create(createGroupDto: CreateGroupDto) {
-    return 'This action adds a new group';
+  constructor(
+    @InjectRepository(Group)
+    private groupRepo: Repository<Group>
+  ) {}
+
+  async create(createGroupDto: CreateGroupDto) {
+    const group = this.groupRepo.create(createGroupDto);
+    return await this.groupRepo.save(group);
   }
 
-  findAll() {
-    return `This action returns all groups`;
+  async findAll() {
+    return await this.groupRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} group`;
+  async findOne(id: number) {
+    const group = await this.groupRepo.findOneBy({ id });
+    if (!group) throw new NotFoundException("Group not found");
+    return group;
   }
 
-  update(id: number, updateGroupDto: UpdateGroupDto) {
-    return `This action updates a #${id} group`;
+  async update(id: number, updateGroupDto: UpdateGroupDto) {
+    const result = await this.groupRepo.update({ id }, updateGroupDto);
+    if (result.affected === 0) throw new NotFoundException("Group not found");
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} group`;
+  async remove(id: number) {
+    const result = await this.groupRepo.delete({ id });
+    if (result.affected === 0) throw new NotFoundException("Group not found");
+    return { message: "Group deleted successfully" };
   }
 }

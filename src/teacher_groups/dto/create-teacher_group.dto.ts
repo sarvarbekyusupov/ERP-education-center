@@ -1,1 +1,4 @@
-export class CreateTeacherGroupDto {}
+export class CreateTeacherGroupDto {
+  teacherId: number;
+  groupId: number;
+}

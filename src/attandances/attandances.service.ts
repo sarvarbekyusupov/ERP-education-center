@@ -1,26 +1,46 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAttandanceDto } from './dto/create-attandance.dto';
-import { UpdateAttandanceDto } from './dto/update-attandance.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Attandance } from "./entities/attandance.entity";
+import { CreateAttandanceDto } from "./dto/create-attandance.dto";
+import { UpdateAttandanceDto } from "./dto/update-attandance.dto";
 
 @Injectable()
 export class AttandancesService {
-  create(createAttandanceDto: CreateAttandanceDto) {
-    return 'This action adds a new attandance';
+  constructor(
+    @InjectRepository(Attandance)
+    private attandanceRepo: Repository<Attandance>
+  ) {}
+
+  async create(createAttandanceDto: CreateAttandanceDto) {
+    const attandance = this.attandanceRepo.create(createAttandanceDto);
+    return await this.attandanceRepo.save(attandance);
   }
 
-  findAll() {
-    return `This action returns all attandances`;
+  async findAll() {
+    return await this.attandanceRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} attandance`;
+  async findOne(id: number) {
+    const attandance = await this.attandanceRepo.findOneBy({ id });
+    if (!attandance) throw new NotFoundException("Attandance not found");
+    return attandance;
   }
 
-  update(id: number, updateAttandanceDto: UpdateAttandanceDto) {
-    return `This action updates a #${id} attandance`;
+  async update(id: number, updateAttandanceDto: UpdateAttandanceDto) {
+    const result = await this.attandanceRepo.update(
+      { id },
+      updateAttandanceDto
+    );
+    if (result.affected === 0)
+      throw new NotFoundException("Attandance not found");
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} attandance`;
+  async remove(id: number) {
+    const result = await this.attandanceRepo.delete({ id });
+    if (result.affected === 0)
+      throw new NotFoundException("Attandance not found");
+    return { message: "Attandance deleted successfully" };
   }
 }

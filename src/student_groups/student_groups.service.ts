@@ -1,26 +1,46 @@
-import { Injectable } from '@nestjs/common';
-import { CreateStudentGroupDto } from './dto/create-student_group.dto';
-import { UpdateStudentGroupDto } from './dto/update-student_group.dto';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { StudentGroup } from "./entities/student_group.entity";
+import { CreateStudentGroupDto } from "./dto/create-student_group.dto";
+import { UpdateStudentGroupDto } from "./dto/update-student_group.dto";
 
 @Injectable()
 export class StudentGroupsService {
-  create(createStudentGroupDto: CreateStudentGroupDto) {
-    return 'This action adds a new studentGroup';
+  constructor(
+    @InjectRepository(StudentGroup)
+    private studentGroupRepo: Repository<StudentGroup>
+  ) {}
+
+  async create(createStudentGroupDto: CreateStudentGroupDto) {
+    const studentGroup = this.studentGroupRepo.create(createStudentGroupDto);
+    return await this.studentGroupRepo.save(studentGroup);
   }
 
-  findAll() {
-    return `This action returns all studentGroups`;
+  async findAll() {
+    return await this.studentGroupRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} studentGroup`;
+  async findOne(id: number) {
+    const studentGroup = await this.studentGroupRepo.findOneBy({ id });
+    if (!studentGroup) throw new NotFoundException("StudentGroup not found");
+    return studentGroup;
   }
 
-  update(id: number, updateStudentGroupDto: UpdateStudentGroupDto) {
-    return `This action updates a #${id} studentGroup`;
+  async update(id: number, updateStudentGroupDto: UpdateStudentGroupDto) {
+    const result = await this.studentGroupRepo.update(
+      { id },
+      updateStudentGroupDto
+    );
+    if (result.affected === 0)
+      throw new NotFoundException("StudentGroup not found");
+    return this.findOne(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} studentGroup`;
+  async remove(id: number) {
+    const result = await this.studentGroupRepo.delete({ id });
+    if (result.affected === 0)
+      throw new NotFoundException("StudentGroup not found");
+    return { message: "StudentGroup deleted successfully" };
   }
 }
