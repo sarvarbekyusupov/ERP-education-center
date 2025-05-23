@@ -6,6 +6,13 @@ import { ConfigModule } from "@nestjs/config";
 import { Admin } from './admin/entities/admin.entity';
 import { Teacher } from './teacher/entities/teacher.entity';
 import { AuthModule } from './auth/auth.module';
+import { StudentsModule } from './students/students.module';
+import { CoursesModule } from './courses/courses.module';
+import { GroupsModule } from './groups/groups.module';
+import { TeacherGroupsModule } from './teacher_groups/teacher_groups.module';
+import { StudentGroupsModule } from './student_groups/student_groups.module';
+import { AttandancesModule } from './attandances/attandances.module';
+import { SchedulesModule } from './schedules/schedules.module';
 
 
 @Module({
@@ -25,6 +32,13 @@ import { AuthModule } from './auth/auth.module';
     AdminModule,
     TeacherModule,
     AuthModule,
+    StudentsModule,
+    CoursesModule,
+    GroupsModule,
+    TeacherGroupsModule,
+    StudentGroupsModule,
+    AttandancesModule,
+    SchedulesModule,
   ],
   controllers: [],
   providers: [],

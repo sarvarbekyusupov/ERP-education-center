@@ -20,9 +20,15 @@ export class Admin {
   @Column()
   phone: string;
 
+  @Column()
+  refresh_token: string;
+
   @Column({ default: "admin" })
   role: string;
 
   @Column({ default: false })
-  isActive: boolean;
+  is_active: boolean;
+
+  @Column()
+  activation_link: string;
 }

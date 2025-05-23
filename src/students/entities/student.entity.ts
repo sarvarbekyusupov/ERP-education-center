@@ -1,7 +1,9 @@
+
+
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class Teacher {
+export class Students {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -20,16 +22,24 @@ export class Teacher {
   @Column()
   phone: string;
 
+  @Column({ default: "teacher" })
+  role: string;
+
+  @Column({ default: false })
+  is_active: boolean;
+
+  @Column()
+  gender: string;
+
   @Column()
   activation_link: string;
 
   @Column()
   refresh_token: string;
 
+  @Column()
+  date_of_birth: string;
 
-  @Column({ default: "teacher" })
-  role: string;
-
-  @Column({ default: false })
-  is_active: boolean;
+  @Column()
+  avatar_url: string;
 }
